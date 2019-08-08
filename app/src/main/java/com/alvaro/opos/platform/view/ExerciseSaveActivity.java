@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.alvaro.opos.R;
@@ -28,6 +30,7 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
 
     @BindView(R.id.editTextQuestion) EditText editTextQuestion;
     @BindView(R.id.possibleAnswersLayout) LinearLayout possibleAnswersLayout;
+    @BindView(R.id.correctAnswerNumberPicker) NumberPicker correctAnswerNumberPicker;
 
     public static void launch(Activity activity) {
         launch(activity, -1L);
@@ -58,13 +61,14 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
     public void display(Exercise exercise) {
         editTextQuestion.setText(exercise.getQuestion());
         List<String> possibleAnswers = exercise.getPossibleAnswers();
+
         for (int i = 0; i < possibleAnswers.size(); i++) {
             String possibleAnswer = possibleAnswers.get(i);
-            EditText editText = new EditText(this);
-            editText.setText(possibleAnswer);
-            editText.setId(i);
-            possibleAnswersLayout.addView(editText);
+            addPossibleAnswer(i, possibleAnswer);
         }
+        correctAnswerNumberPicker.setMinValue(0);
+        correctAnswerNumberPicker.setWrapSelectorWheel(true);
+        correctAnswerNumberPicker.setValue(exercise.getCorrectAnswer());
     }
 
     @Override
@@ -81,9 +85,53 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
         String question = editTextQuestion.getText().toString();
         List<String> possibleAnswers = new ArrayList<>();
         for (int i = 0; i < possibleAnswersLayout.getChildCount(); i++) {
-            possibleAnswers.add(((EditText)possibleAnswersLayout.getChildAt(i)).getText().toString());
+            String possibleAnswer = getPossibleAnswerString(i);
+            possibleAnswers.add(possibleAnswer);
         }
 
-        presenter.onSave("", question, 0, possibleAnswers);
+        int correctAnswer = correctAnswerNumberPicker.getValue();
+        presenter.onSave("", question, correctAnswer, possibleAnswers);
+    }
+
+    private String getPossibleAnswerString(int position) {
+        LinearLayout linearLayout = (LinearLayout) possibleAnswersLayout.getChildAt(position);
+        EditText editText = (EditText) linearLayout.getChildAt(0);
+        return editText.getText().toString();
+    }
+
+    private void addPossibleAnswer(int id, String text) {
+        EditText editText = new EditText(this);
+        editText.setText(text);
+        editText.setId(id);
+        editText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+
+        Button button = new Button(this);
+        button.setText("X");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                possibleAnswersLayout.removeViewAt(id);
+                updateCorrectAnswerNumberPickerMaxValue();
+            }
+        });
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        linearLayout.addView(editText);
+        linearLayout.addView(button);
+
+        possibleAnswersLayout.addView(linearLayout);
+        updateCorrectAnswerNumberPickerMaxValue();
+    }
+
+    private void updateCorrectAnswerNumberPickerMaxValue() {
+        int childCount = possibleAnswersLayout.getChildCount();
+        correctAnswerNumberPicker.setMaxValue(childCount - 1);
+    }
+
+    public void onAddPossibleAnswerButtonClick(View view) {
+        addPossibleAnswer(possibleAnswersLayout.getChildCount(), "");
     }
 }
