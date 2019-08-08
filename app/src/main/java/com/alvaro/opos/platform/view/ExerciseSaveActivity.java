@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.alvaro.opos.R;
 import com.alvaro.opos.domain.model.exercise.Exercise;
 import com.alvaro.opos.presentation.presenter.ExerciseSavePresenter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,6 +27,7 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
     @Inject ExerciseSavePresenter presenter;
 
     @BindView(R.id.editTextQuestion) EditText editTextQuestion;
+    @BindView(R.id.possibleAnswersLayout) LinearLayout possibleAnswersLayout;
 
     public static void launch(Activity activity) {
         launch(activity, -1L);
@@ -37,7 +42,7 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exercise_new);
+        setContentView(R.layout.activity_exercise_save);
         ButterKnife.bind(this);
 
         informPresenterViewIsReady();
@@ -52,6 +57,14 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
     @Override
     public void display(Exercise exercise) {
         editTextQuestion.setText(exercise.getQuestion());
+        List<String> possibleAnswers = exercise.getPossibleAnswers();
+        for (int i = 0; i < possibleAnswers.size(); i++) {
+            String possibleAnswer = possibleAnswers.get(i);
+            EditText editText = new EditText(this);
+            editText.setText(possibleAnswer);
+            editText.setId(i);
+            possibleAnswersLayout.addView(editText);
+        }
     }
 
     @Override
@@ -66,6 +79,11 @@ public class ExerciseSaveActivity extends DaggerAppCompatActivity implements Exe
 
     public void onSaveButtonClick(View v) {
         String question = editTextQuestion.getText().toString();
-        presenter.onSave("", question, null, null);
+        List<String> possibleAnswers = new ArrayList<>();
+        for (int i = 0; i < possibleAnswersLayout.getChildCount(); i++) {
+            possibleAnswers.add(((EditText)possibleAnswersLayout.getChildAt(i)).getText().toString());
+        }
+
+        presenter.onSave("", question, 0, possibleAnswers);
     }
 }

@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alvaro.opos.R;
 import com.alvaro.opos.domain.model.exercise.Exercise;
 import com.alvaro.opos.presentation.presenter.ExerciseDetailPresenter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,6 +29,7 @@ public class ExerciseDetailActivity extends DaggerAppCompatActivity implements E
 
 
     @BindView(R.id.textViewQuestion) TextView textView;
+    @BindView(R.id.radioGroup) RadioGroup radioGroup;
 
     public static void launch(Activity activity, Long id) {
         Intent intent = new Intent(activity, ExerciseDetailActivity.class);
@@ -44,6 +49,22 @@ public class ExerciseDetailActivity extends DaggerAppCompatActivity implements E
     @Override
     public void display(Exercise exercise) {
         textView.setText(exercise.getQuestion());
+        List<String> possibleAnswers = exercise.getPossibleAnswers();
+
+        for (int i = 0; i < possibleAnswers.size(); i++) {
+            String possibleAnswer = possibleAnswers.get(i);
+            RadioButton radioButton = new RadioButton(this);
+            radioButton.setText(possibleAnswer);
+            radioButton.setId(i);
+            radioGroup.addView(radioButton);
+        }
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                presenter.onPossibleAnswerSelected(exercise, checkedId);
+            }
+        });
+
     }
 
     @Override
@@ -54,6 +75,16 @@ public class ExerciseDetailActivity extends DaggerAppCompatActivity implements E
     @Override
     public void navigateToSave(Long exerciseId) {
         ExerciseSaveActivity.launch(this, exerciseId);
+    }
+
+    @Override
+    public void onCorrectAnswerSelected(String selectedAnswer) {
+        Toast.makeText(this, selectedAnswer, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onWrongAnswerSelected(String selectedAnswer) {
+        Toast.makeText(this, selectedAnswer + " (X)", Toast.LENGTH_SHORT).show();
     }
 
     @Override

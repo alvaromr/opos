@@ -28,13 +28,22 @@ DI => Dagger
 Bind views => Butternife
     
 ## TO-DO:  
+ 
+ Include a button wich adds possible answers
+ 
+ Include a button wich removes a possible answer
+ 
+ Include a button to select the correct answer
+ 
+ Check if user's selection is the correct answer
+ 
  Validate data on save
  
  Generate ids with UUID 
  
- Use Exercise fields apart from question in views and data
- 
  Test with JUnit and Expresso
+ 
+ Try Picasso for images
  
  Try Room lib
  

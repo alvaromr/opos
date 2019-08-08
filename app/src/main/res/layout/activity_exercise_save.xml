@@ -19,6 +19,17 @@
         app:layout_constraintTop_toTopOf="parent"
         android:inputType="text" />
 
+    <!--suppress CheckTagEmptyBody -->
+    <LinearLayout
+        android:id="@+id/possibleAnswersLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextQuestion"></LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

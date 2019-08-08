@@ -12,12 +12,14 @@ import com.alvaro.opos.data.source.local.db.DbExerciseLocalDatasource;
 import com.alvaro.opos.domain.model.exercise.Exercise;
 import com.alvaro.opos.domain.model.exercise.ExerciseRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+
+import static com.alvaro.opos.data.entity.mapper.MapperUtils.getStringFromList;
 
 @Module()
 class DataModule {
@@ -62,7 +64,8 @@ class DataModule {
             ExerciseEntity e = new ExerciseEntity();
             e.id = (long) i;
             e.question = "Question " + i;
-            e.realAnswers = new ArrayList<>();
+            e.possibleAnswers = getStringFromList(Arrays.asList("option 1", "option 2", "option 3"));
+            e.correctAnswer = 1;
 
             datasource.save(e);
         }

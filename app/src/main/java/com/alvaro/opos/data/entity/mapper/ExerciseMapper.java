@@ -6,6 +6,9 @@ import com.alvaro.opos.domain.model.exercise.Exercise;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.alvaro.opos.data.entity.mapper.MapperUtils.getListFromString;
+import static com.alvaro.opos.data.entity.mapper.MapperUtils.getStringFromList;
+
 public class ExerciseMapper implements Mapper<Exercise, ExerciseEntity> {
     @Override
     public List<Exercise> from(List<ExerciseEntity> list) {
@@ -18,16 +21,21 @@ public class ExerciseMapper implements Mapper<Exercise, ExerciseEntity> {
 
     @Override
     public Exercise from(ExerciseEntity entity) {
-        if(entity == null) {
+        if (entity == null) {
             return null;
         }
-        return new Exercise(
-                entity.id,
-                entity.image,
-                entity.question,
-                entity.realAnswers,
-                entity.possibleAnswers
-        );
+        try {
+            return new Exercise(
+                    entity.id,
+                    entity.image,
+                    entity.question,
+                    entity.correctAnswer,
+                    getListFromString(entity.possibleAnswers)
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -36,8 +44,8 @@ public class ExerciseMapper implements Mapper<Exercise, ExerciseEntity> {
         entity.id = exercise.getId();
         entity.question = exercise.getQuestion();
         entity.image = exercise.getImage();
-        entity.realAnswers = exercise.getRealAnswers();
-        entity.possibleAnswers = exercise.getRealAnswers();
+        entity.correctAnswer = exercise.getCorrectAnswer();
+        entity.possibleAnswers = getStringFromList(exercise.getPossibleAnswers());
         return entity;
     }
 }

@@ -46,8 +46,8 @@ public class ExerciseSavePresenter implements Presenter<ExerciseSavePresenter.Vi
         }, this.exerciseId);
     }
 
-    public void onSave(String imagePath, String question, List<String> realAnswers, List<String> possibleAnswers) {
-        Exercise exercise = new Exercise(exerciseId, imagePath, question, realAnswers, possibleAnswers);
+    public void onSave(String imagePath, String question, int correctAnswer, List<String> possibleAnswers) {
+        Exercise exercise = new Exercise(exerciseId, imagePath, question, correctAnswer, possibleAnswers);
         saveExercise.execute(new Handler<Exercise>() {
             @Override
             public void handle(Exercise saved) {

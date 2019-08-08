@@ -6,14 +6,14 @@ public class Exercise {
     private final Long id;
     private final String image;
     private final String question;
-    private final List<String> realAnswers;
+    private final int correctAnswer;
     private final List<String> possibleAnswers;
 
-    public Exercise(Long id, String imagePath, String question, List<String> realAnswers, List<String> possibleAnswers) {
+    public Exercise(Long id, String imagePath, String question, int correctAnswer, List<String> possibleAnswers) {
         this.id = id;
         this.image = imagePath;
         this.question = question;
-        this.realAnswers = realAnswers;
+        this.correctAnswer = correctAnswer;
         this.possibleAnswers = possibleAnswers;
     }
 
@@ -29,8 +29,8 @@ public class Exercise {
         return question;
     }
 
-    public List<String> getRealAnswers() {
-        return realAnswers;
+    public int getCorrectAnswer() {
+        return correctAnswer;
     }
 
     public List<String> getPossibleAnswers() {
